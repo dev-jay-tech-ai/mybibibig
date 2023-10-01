@@ -6,38 +6,44 @@
  */
 
 get_header();
+$parent_page_id = get_the_ID();
 
 ?>
 <div id="content" class="site-content">
 		<main id="main" class="site-main mt-5" role="main">
-
-		<?php
+		<?php	
 			$args = array(
-				'post_type'      => 'page',        // Retrieve only pages
-				'post_status'    => 'publish',     // Retrieve only published pages
-				'posts_per_page' => -1,            // Retrieve all pages
-				'post_parent'    => 1414, // Replace $parent_page_id with the ID of the parent page
-				'orderby'        => 'menu_order',  // Order by the menu order of pages
-				'order'          => 'ASC',         // Ascending order (you can change to 'DESC' for descending)
+				'post_type'      => 'page',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'post_parent'    => $parent_page_id,
+				'orderby'        => 'menu_order',
+				'order'          => 'ASC',
 			);
 
 			$child_pages_query = new WP_Query($args);
 
 			if ($child_pages_query->have_posts()) {
-				while ($child_pages_query->have_posts()) {
-					  // Get the slug (post_name)
-						$slug = $child_pages_query->post->post_name;
-						$child_pages_query->the_post();
+					while ($child_pages_query->have_posts()) {
+							$child_pages_query->the_post();
 
-						// Display child page content here
-						the_title();  // Display the child page title
-						echo '<p><Strong>Slug: ' . esc_html($slug) . '</Strong></p>';
-						the_content(); // Display the child page content
+							// Get the page template
+							$page_template = get_post_meta(get_the_ID(), '_wp_page_template', true);
 
-						// You can add more template code to format how each child page is displayed
-				}
-				wp_reset_postdata(); // Restore the global $post object
-			}
+							// Construct the template name for get_template_part
+							$template_name = str_replace(array('section-', '.php'), '', basename($page_template));
+
+							// Include the custom template file if it exists
+							if (!empty($page_template) && locate_template($page_template)) {
+									get_template_part('section-parts/section', $template_name);
+							} else {
+									// If no custom template is specified, display default content
+									the_title();
+									the_content();
+							}
+					}
+				wp_reset_postdata();
+			}	
 		?>
 		</main>
 	</div>

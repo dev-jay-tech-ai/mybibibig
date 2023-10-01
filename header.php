@@ -15,4 +15,5 @@ if(function_exists('wp_body_open')) wp_body_open(); ?>
     <div class="container">
     <?php get_template_part('template-parts/header/nav'); ?>
     </div>
+    <?php get_template_part('section-parts/section', 'hero'); ?>
 </header>

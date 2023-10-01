@@ -14,6 +14,10 @@
 		<?php //the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 	</header>
 
+	<div class='section-title-area'>
+		<h5 class='section-subtitle'><?php the_title() ?></h5>
+		<h2 class='section-title'>Section 1</h2>
+	</div>
 	<div class="entry-content">
 		<?php the_content(); ?>
 	</div>

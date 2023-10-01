@@ -1,6 +1,6 @@
 <?php
 /* 
-Template Name: Feature
+Template Name: Alliance
 */
 ?>
 <section id="<?php echo get_the_ID(); ?>" class="page-wrap">
