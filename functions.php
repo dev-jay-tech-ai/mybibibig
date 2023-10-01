@@ -1,25 +1,28 @@
 <?php
+/**
+ * Theme Functions.
+ * 
+ * @package Mybibibig
+ */
+
 // Load Stylesheets
-function load_css()
-{
+function load_css() {
 		wp_register_style('bootstrap', get_template_directory_uri() . '/assets/css/bootstrap.min.css', array(), false, 'all' );
 		wp_enqueue_style('bootstrap');
 
 		wp_register_style('magnific', get_template_directory_uri() . '/assets/css/magnific-popup.css', array(), false, 'all' );
 		wp_enqueue_style('magnific');
 
-		wp_register_style('main', get_template_directory_uri() . '/assets/css/main.css', array(), false, 'all' );
+		wp_register_style('main', get_template_directory_uri() . '/assets/css/main.css', array(), filemtime(get_template_directory_uri() . '/assets/css/main.css'), 'all' );
 		wp_enqueue_style('main');
-		;
-
 }
+
 add_action('wp_enqueue_scripts','load_css');
 
 
 
 // Load Javascript
-function load_js()
-{	
+function load_js() {	
 		wp_enqueue_script('jquery');
 
 		wp_register_script('bootstrap', get_template_directory_uri() . '/assets/js/bootstrap.min.js', 'jquery', false, true);
@@ -29,7 +32,7 @@ function load_js()
 		wp_enqueue_script('magnific');
 
 
-		wp_register_script('custom', get_template_directory_uri() . '/assets/js/custom.js', 'jquery', false, true);
+		wp_register_script('custom', get_template_directory_uri() . '/assets/js/custom.js', 'jquery', filemtime(get_template_directory_uri() . '/assets/js/custom.js'), true);
 		wp_enqueue_script('custom');
 
 }
@@ -154,15 +157,9 @@ function my_first_taxonomy()
 
 }
 add_action('init', 'my_first_taxonomy');
-
-
-
-
-
-
-
 add_action('wp_ajax_enquiry', 'enquiry_form');
 add_action('wp_ajax_nopriv_enquiry', 'enquiry_form');
+
 function enquiry_form()
 {
 
@@ -381,6 +378,38 @@ function search_query()
 
 
 
+$mybibibig_js_settings = array(
+	'mybibibig_disable_animation'     => get_theme_mod('mybibibig_animation_disable'),
+	'mybibibig_disable_sticky_header' => get_theme_mod('mybibibig_sticky_header_disable'),
+	'mybibibig_vertical_align_menu'   => get_theme_mod('mybibibig_vertical_align_menu'),
+	'hero_animation'                 => get_theme_mod('mybibibig_hero_option_animation', 'flipInX'),
+	'hero_speed'                     => intval(get_theme_mod('mybibibig_hero_option_speed', 5000)),
+	'hero_fade'                      => intval(get_theme_mod('mybibibig_hero_slider_fade', 750)),
+	'submenu_width'                  => intval(get_theme_mod('mybibibig_submenu_width', 0)),
+	'hero_duration'                  => intval(get_theme_mod('mybibibig_hero_slider_duration', 5000)),
+	'hero_disable_preload'           => get_theme_mod('mybibibig_hero_disable_preload', false) ? true : false,
+	'disabled_google_font'           => get_theme_mod('mybibibig_disable_g_font', false) ? true : false,
+	'is_home'                        => '',
+	'gallery_enable'                 => '',
+	'is_rtl'                         => is_rtl(),
+);
 
+class Custom_Menu_Walker extends Walker_Nav_Menu {
+	function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+			if ($args->theme_location === 'top-menu') {
+					$item->url = '#' . sanitize_title($item->title); // Modify the href attribute
+			}
+			
+			parent::start_el($output, $item, $depth, $args);
+	}
+}
 
+function modify_nav_menu_args($args) {
+	if ($args['theme_location'] === 'top-menu') {
+			$args['walker'] = new Custom_Menu_Walker(); // Use the custom walker class
+	}
+	
+	return $args;
+}
 
+add_filter('wp_nav_menu_args', 'modify_nav_menu_args');

@@ -1,30 +1,43 @@
-<?php get_header();?>
+<?php
+/**
+ * The template for displaying all pages.
+ *
+ * This is the template that displays all pages by default.
+ * Please note that this is the WordPress construct of pages
+ * and that other 'pages' on your WordPress site may use a
+ * different template.
+ *
+ * @link https://codex.wordpress.org/Template_Hierarchy
+ *
+ * @package Mybibibig
+ */
 
-<section class="page-wrap">
-<div class="container">
-	
-	<p>그냥 페이지</p>
+ get_header();
 
-		<section class="row">
+ $layout = get_pages();
 
-			<div class="col-lg-9">
-				<h1><?php the_title();?></h1>
+?>
 
+<div id="content" class="site-content">
+		<div id="content-inside" class="container <?php echo esc_attr( $layout ); ?>">
+			<div id="primary" class="content-area">
+				<main id="main" class="site-main" role="main">
 
-				<?php if(has_post_thumbnail()):?>
-					<img src="<?php the_post_thumbnail_url('blog-large');?>" alt="<?php the_title();?>" class="img-fluid mb-3 img-thumbnail">
-				<?php endif;?>
+					<?php while ( have_posts() ) : the_post(); ?>
+						<?php get_template_part( 'template-parts/content/content', 'page' ); ?>
+						<?php
+							// If comments are open or we have at least one comment, load up the comment template.
+							if ( comments_open() || get_comments_number() ) :
+								comments_template();
+							endif;
+						?>
 
-				<?php get_template_part('includes/section','content');?>
+					<?php endwhile; // End of the loop. ?>
+
+				</main>
 			</div>
 
+		</div>
+	</div>
 
-	</section>
-
-
-
-</div>
-</section>
-
-
-<?php get_footer();?>
+<?php get_footer(); ?>
